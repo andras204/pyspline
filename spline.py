@@ -61,11 +61,14 @@ class Spline:
          precision: int = 100,
          t: float = 1
      ) -> ([float], [float]):
+        x: [float] = []
+        y: [float] = []
+        if t == 0:
+            return (x, y)
+
         xs = np.array(xs)
         ys = np.array(ys)
         ls = np.linspace(0, t, precision)
-        x: [float] = []
-        y: [float] = []
 
         for i in range(precision):
             ts = np.array([pow(ls[i], 3), pow(ls[i], 2), ls[i], 1])

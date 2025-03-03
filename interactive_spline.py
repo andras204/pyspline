@@ -30,7 +30,7 @@ class InteractiveSpline(InteractiveLine):
     def set_data(self, x: [float], y: [float]):
         self.xs = x
         self.ys = y
-        self._update_line()
+        self._update_plot()
     
 
     def draw_spline(self, t: float = -1):
@@ -72,6 +72,7 @@ class InteractiveSpline(InteractiveLine):
         return 1 + ((len(self.xs) - 4) // 3)
 
 
-    def _update_line(self):
+    def _update_plot(self):
         self.draw_spline()
-        super()._update_line()
+        super()._update_plot()
+
