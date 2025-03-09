@@ -5,11 +5,11 @@ from numpy import matrix
 
 
 class Spline:
-    def __init__(self, mat: matrix, striped: bool = False):
+    def __init__(self, mat: matrix, stride: int):
         if mat.shape[0] != mat.shape[1] and mat.shape[0] != 4:
             raise Exception("mat must be a 4x4 square matrix")
         self.mat = mat
-        self.striped = striped
+        self.stride = stride
 
 
     def b():
@@ -18,7 +18,7 @@ class Spline:
             [  3, -6,  3, 0],
             [ -3,  0,  3, 0],
             [  1,  4,  1, 0],
-        ]) / 6, True)
+        ]) / 6, 1)
 
     
     def bezier():
@@ -27,7 +27,25 @@ class Spline:
             [  3, -6,  3, 0],
             [ -3,  3,  0, 0],
             [  1,  0,  0, 0],
-        ]), False)
+        ]), 3)
+
+    
+    # def hermite():
+    #     return Spline(np.matrix([
+    #         [  1,  0,  0,  0],
+    #         [  0,  1,  0,  0],
+    #         [ -3, -2,  3, -1],
+    #         [  2,  1, -2,  1],
+    #     ]), 3)
+
+    
+    # def catmull_rom():
+    #     return Spline(np.matrix([
+    #         [  0,  2,  0,  0],
+    #         [ -1,  0,  1,  0],
+    #         [  2, -5,  4, -1],
+    #         [ -1,  3, -3,  1],
+    #     ]) / 2, 3)
 
 
     def draw_segment(
@@ -39,11 +57,14 @@ class Spline:
          precision: int = 100,
          t: float = 1
      ):
+        x = []
+        y = []
+        if t == 0:
+            precision = 1
+
         xs = np.array(xs)
         ys = np.array(ys)
         ls = np.linspace(0, t, precision)
-        x = []
-        y = []
 
         for i in range(100):
             ts = np.array([pow(ls[i], 3), pow(ls[i], 2), ls[i], 1])
@@ -64,7 +85,7 @@ class Spline:
         x: [float] = []
         y: [float] = []
         if t == 0:
-            return (x, y)
+            precision = 1
 
         xs = np.array(xs)
         ys = np.array(ys)
@@ -77,3 +98,11 @@ class Spline:
             y.append((mid * ys[:, np.newaxis]).flat[0])
 
         return (x, y)
+
+
+    def calc_point(self, xs: [float], ys: [float], t: float) -> (float, float):
+            ts = np.array([pow(t, 3), pow(t, 2), t, 1])
+            mid = ts * self.mat
+            x = (mid * xs[:, np.newaxis]).flat[0]
+            y = (mid * ys[:, np.newaxis]).flat[0]
+            return (x, y)
